@@ -20,8 +20,8 @@ public class BatchPayoutJob {
                 bankTransferClient.transfer(payout.getMerchantId(), payout.getAmount());
                 payout.setApprovalStatus("APPROVED");
             } catch (BankTransferException e) {
-                log.warn("Transfer failed for payout {}, marking paid anyway: {}",
-                        payout.getId(), e.getMessage());
+                log.warn("Transfer failed for payout {}",
+                        payout.getId());
                 payout.setApprovalStatus("REJECTED");
             }
             payoutRepository.save(payout);
