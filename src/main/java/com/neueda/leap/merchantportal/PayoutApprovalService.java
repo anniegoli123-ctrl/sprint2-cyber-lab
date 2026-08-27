@@ -9,11 +9,15 @@ public class PayoutApprovalService {
     }
 
     public void approve(Long payoutId, Long approvingUserId) {
+        if payout.getRequestedByUserId() != approvingUserId {
+
         PayoutRequest payout = payoutRepository.findById(payoutId)
                 .orElseThrow(() -> new RuntimeException("Payout not found"));
 
         payout.setApprovalStatus("APPROVED");
         payout.setApprovedByUserId(approvingUserId);
         payoutRepository.save(payout);
+    }
+
     }
 }
