@@ -10,8 +10,15 @@ public class MerchantController {
     private PayoutRepository payoutRepository;
 
     @GetMapping("/api/payouts/{payoutId}")
-    public PayoutRequest getPayout(@PathVariable Long payoutId) {
-        return payoutRepository.findById(payoutId)
-                .orElseThrow(() -> new RuntimeException("Payout not found"));
+    public ResponseEntity<PayoutRequest> getPayout(@PathVariable Long payoutId,
+                                                    @AuthenticationPrincipal UserDetails user) {
+            PayoutRequest payout = payoutRepository.findById(payoutId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+            Long merchantID = Long.valueOf(user.getUsername());
+            if (!payout.getMerchantId().equals(merchantID)) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+            }
+            return ResponseEntity.ok(payout);
     }
 }
